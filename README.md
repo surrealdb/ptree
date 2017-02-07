@@ -6,7 +6,9 @@ Ptree is an in-memory immutable patricia tree package for Golang.
 
 #### Features
 
-- 
+- Immutable radix tree
+- Copy-on-write radix tree
+- Rich transaction support
 
 #### Installation
 
