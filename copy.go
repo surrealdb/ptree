@@ -31,7 +31,7 @@ func (c *Copy) Size() int {
 	return c.size
 }
 
-// Root returns the root node withing this copy of the radix tree.
+// Root returns the root node within this copy of the radix tree.
 func (c *Copy) Root() *Node {
 	return c.root
 }
