@@ -72,9 +72,9 @@ func (n *Node) Max() ([]byte, interface{}) {
 
 		if n.isLeaf() {
 			return n.leaf.key, n.leaf.val
-		} else {
-			break
 		}
+
+		break
 
 	}
 

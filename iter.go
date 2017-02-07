@@ -138,9 +138,9 @@ OUTER:
 					if n.isLeaf() {
 						c.seek = n.leaf.key
 						return n.leaf.key, n.leaf.val
-					} else {
-						continue OUTER
 					}
+
+					continue OUTER
 
 				}
 
@@ -266,15 +266,13 @@ func (c *Cursor) Seek(k []byte) ([]byte, interface{}) {
 			} else if s[0] < t.edges[0].label {
 				if len(c.path) == 0 {
 					return c.first(c.tree.root)
-				} else {
-					return c.first(c.path[len(c.path)-1].node)
 				}
+				return c.first(c.path[len(c.path)-1].node)
 			} else if s[0] > t.edges[len(t.edges)-1].label {
 				if len(c.path) == 0 {
 					break
-				} else {
-					return c.last(c.path[len(c.path)-1].node)
 				}
+				return c.last(c.path[len(c.path)-1].node)
 			}
 
 			break
@@ -285,21 +283,25 @@ func (c *Cursor) Seek(k []byte) ([]byte, interface{}) {
 		if bytes.Compare(s, n.prefix) == 0 {
 			c.path = append(c.path, &item{pos: x, node: t})
 			s = s[:0]
+			continue
 		} else if bytes.HasPrefix(s, n.prefix) {
 			c.path = append(c.path, &item{pos: x, node: t})
 			s = s[len(n.prefix):]
+			continue
 		} else if bytes.HasPrefix(n.prefix, s) {
 			c.path = append(c.path, &item{pos: x, node: t})
 			s = s[:0]
+			continue
 		} else if bytes.Compare(s, n.prefix) < 0 {
 			c.path = append(c.path, &item{pos: x, node: t})
 			s = s[:0]
+			continue
 		} else if bytes.Compare(s, n.prefix) > 0 {
 			c.last(n)
 			return c.Next()
-		} else {
-			break
 		}
+
+		break
 
 	}
 
@@ -361,9 +363,9 @@ func (c *Cursor) last(n *Node) ([]byte, interface{}) {
 		if n.isLeaf() {
 			c.seek = n.leaf.key
 			return n.leaf.key, n.leaf.val
-		} else {
-			break
 		}
+
+		break
 
 	}
 

@@ -158,11 +158,11 @@ func (c *Copy) put(p, n *Node, s, k []byte, v interface{}) (*Node, *leaf) {
 
 		if n.isLeaf() {
 			d.leaf.val = v
-			return d, n.leaf
 		} else {
 			d.leaf = &leaf{key: k, val: v}
-			return d, n.leaf
 		}
+
+		return d, n.leaf
 
 	}
 
