@@ -208,6 +208,15 @@ func TestComplex(t *testing.T) {
 		So(i, ShouldEqual, 35)
 	})
 
+	Convey("Can iterate tree items at `/test/zen/s` with `walk`", t, func() {
+		i := 0
+		c.Root().Walk([]byte("/test/zen/s"), func(k []byte, v interface{}) (e bool) {
+			i++
+			return
+		})
+		So(i, ShouldEqual, 9)
+	})
+
 	Convey("Can iterate tree items at `/test/zen/sub` with `walk`", t, func() {
 		i := 0
 		c.Root().Walk([]byte("/test/zen/sub"), func(k []byte, v interface{}) (e bool) {
@@ -215,6 +224,15 @@ func TestComplex(t *testing.T) {
 			return
 		})
 		So(i, ShouldEqual, 9)
+	})
+
+	Convey("Can iterate tree items at `/test/zen/sub-o` with `walk`", t, func() {
+		i := 0
+		c.Root().Walk([]byte("/test/zen/sub-o"), func(k []byte, v interface{}) (e bool) {
+			i++
+			return
+		})
+		So(i, ShouldEqual, 3)
 	})
 
 	Convey("Can iterate tree items at `/test/zen/sub-one` with `walk`", t, func() {
@@ -246,6 +264,15 @@ func TestComplex(t *testing.T) {
 		So(i, ShouldEqual, 3)
 	})
 
+	Convey("Can iterate tree items at `/test/zen/s` with `subs`", t, func() {
+		i := 0
+		c.Root().Subs([]byte("/test/zen/s"), func(k []byte, v interface{}) (e bool) {
+			i++
+			return
+		})
+		So(i, ShouldEqual, 3)
+	})
+
 	Convey("Can iterate tree items at `/test/zen/sub` with `subs`", t, func() {
 		i := 0
 		c.Root().Subs([]byte("/test/zen/sub"), func(k []byte, v interface{}) (e bool) {
@@ -253,6 +280,15 @@ func TestComplex(t *testing.T) {
 			return
 		})
 		So(i, ShouldEqual, 3)
+	})
+
+	Convey("Can iterate tree items at `/test/zen/sub-o` with `subs`", t, func() {
+		i := 0
+		c.Root().Subs([]byte("/test/zen/sub-t"), func(k []byte, v interface{}) (e bool) {
+			i++
+			return
+		})
+		So(i, ShouldEqual, 1)
 	})
 
 	Convey("Can iterate tree items at `/test/zen/sub-one` with `subs`", t, func() {
@@ -284,6 +320,15 @@ func TestComplex(t *testing.T) {
 		So(i, ShouldEqual, 0)
 	})
 
+	Convey("Can iterate tree items at `/test/zen/s` with `path`", t, func() {
+		i := 0
+		c.Root().Path([]byte("/test/zen/s"), func(k []byte, v interface{}) (e bool) {
+			i++
+			return
+		})
+		So(i, ShouldEqual, 2)
+	})
+
 	Convey("Can iterate tree items at `/test/zen/sub` with `path`", t, func() {
 		i := 0
 		c.Root().Path([]byte("/test/zen/sub"), func(k []byte, v interface{}) (e bool) {
@@ -293,13 +338,22 @@ func TestComplex(t *testing.T) {
 		So(i, ShouldEqual, 2)
 	})
 
-	Convey("Can iterate tree items at `/test/zen/sub-one/1st` with `path`", t, func() {
+	Convey("Can iterate tree items at `/test/zen/sub-o` with `path`", t, func() {
 		i := 0
-		c.Root().Path([]byte("/test/zen/sub-one/1st"), func(k []byte, v interface{}) (e bool) {
+		c.Root().Path([]byte("/test/zen/sub-o"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
-		So(i, ShouldEqual, 4)
+		So(i, ShouldEqual, 2)
+	})
+
+	Convey("Can iterate tree items at `/test/zen/sub-one` with `path`", t, func() {
+		i := 0
+		c.Root().Path([]byte("/test/zen/sub-one"), func(k []byte, v interface{}) (e bool) {
+			i++
+			return
+		})
+		So(i, ShouldEqual, 3)
 	})
 
 	Convey("Can iterate tree items at `/test/zen/sub` with `path` and exit", t, func() {
@@ -636,3 +690,36 @@ func TestDelete(t *testing.T) {
 	})
 
 }
+
+/*func TestBinary(t *testing.T) {
+
+	c := New().Copy()
+
+	// surrealabcum
+	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0}, nil)
+	// surrealabcum!utobie@abcum.com
+	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 33, 0, 0, 7, 117, 0, 0, 7, 116, 111, 98, 105, 101, 64, 97, 98, 99, 117, 109, 46, 99, 111, 109, 0, 0}, nil)
+	// surrealabcum*acreon
+	tk := []byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 42, 0, 0}
+	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 42, 0, 0, 7, 97, 99, 114, 101, 111, 110, 0, 0}, nil)
+	// surrealabcum*acreon!utobie@abcum.com
+	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 42, 0, 0, 7, 97, 99, 114, 101, 111, 110, 0, 0, 7, 33, 0, 0, 7, 117, 0, 0, 7, 116, 111, 98, 105, 101, 64, 97, 98, 99, 117, 109, 46, 99, 111, 109, 0, 0}, nil)
+	// surrealabcum*acreon*person
+	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 42, 0, 0, 7, 97, 99, 114, 101, 111, 110, 0, 0, 7, 42, 0, 0, 7, 112, 101, 114, 115, 111, 110, 0, 0}, nil)
+	// surrealabcum*acreon*person!fage
+	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 42, 0, 0, 7, 97, 99, 114, 101, 111, 110, 0, 0, 7, 42, 0, 0, 7, 112, 101, 114, 115, 111, 110, 0, 0, 7, 33, 0, 0, 7, 102, 0, 0, 7, 97, 103, 101, 0, 0}, nil)
+	// surrealabcum*acreon*person!fname
+	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 42, 0, 0, 7, 97, 99, 114, 101, 111, 110, 0, 0, 7, 42, 0, 0, 7, 112, 101, 114, 115, 111, 110, 0, 0, 7, 33, 0, 0, 7, 102, 0, 0, 7, 110, 97, 109, 101, 0, 0}, nil)
+	// surrealabcum*acreon*person!isort
+	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 42, 0, 0, 7, 97, 99, 114, 101, 111, 110, 0, 0, 7, 42, 0, 0, 7, 112, 101, 114, 115, 111, 110, 0, 0, 7, 33, 0, 0, 7, 105, 0, 0, 7, 115, 111, 114, 116, 0, 0}, nil)
+
+	Convey("Can list items", t, func() {
+		i := 0
+		c.Root().Subs(tk, func(k []byte, v interface{}) (b bool) {
+			i++
+			return
+		})
+		So(i, ShouldEqual, 1)
+	})
+
+}*/

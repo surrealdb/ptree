@@ -135,7 +135,7 @@ func (n *Node) Subs(k []byte, f Walker) {
 		if bytes.HasPrefix(s, n.prefix) {
 			s = s[len(n.prefix):]
 		} else if bytes.HasPrefix(n.prefix, s) {
-			subs(n, f, false)
+			subs(n, f, true)
 			return
 		} else {
 			break
