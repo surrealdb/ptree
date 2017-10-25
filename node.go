@@ -23,18 +23,13 @@ import (
 // can be either an edge node or a leaf node.
 type Node struct {
 	leaf   *leaf
-	edges  []edge
+	edges  []*Node
 	prefix []byte
 }
 
 type leaf struct {
 	key []byte
 	val interface{}
-}
-
-type edge struct {
-	label byte
-	node  *Node
 }
 
 // Min returns the key and value of the minimum item in the
@@ -48,7 +43,7 @@ func (n *Node) Min() ([]byte, interface{}) {
 		}
 
 		if len(n.edges) > 0 {
-			n = n.edges[0].node
+			n = n.edges[0]
 		} else {
 			break
 		}
@@ -66,7 +61,7 @@ func (n *Node) Max() ([]byte, interface{}) {
 	for {
 
 		if num := len(n.edges); num > 0 {
-			n = n.edges[num-1].node
+			n = n.edges[num-1]
 			continue
 		}
 
@@ -98,7 +93,7 @@ func (n *Node) Path(k []byte, f Walker) {
 			return
 		}
 
-		if _, n = n.getEdge(s[0]); n == nil {
+		if _, n = n.getSub(s[0]); n == nil {
 			return
 		}
 
@@ -127,7 +122,7 @@ func (n *Node) Subs(k []byte, f Walker) {
 		}
 
 		// Look for an edge
-		if _, n = n.getEdge(s[0]); n == nil {
+		if _, n = n.getSub(s[0]); n == nil {
 			break
 		}
 
@@ -160,7 +155,7 @@ func (n *Node) Walk(k []byte, f Walker) {
 		}
 
 		// Look for an edge
-		if _, n = n.getEdge(s[0]); n == nil {
+		if _, n = n.getSub(s[0]); n == nil {
 			break
 		}
 
@@ -199,62 +194,62 @@ func (n *Node) dup() *Node {
 		copy(d.prefix, n.prefix)
 	}
 	if len(n.edges) != 0 {
-		d.edges = make([]edge, len(n.edges))
+		d.edges = make([]*Node, len(n.edges))
 		copy(d.edges, n.edges)
 	}
 	return d
 }
 
-func (n *Node) addEdge(e edge) {
+func (n *Node) addSub(s *Node) {
 	num := len(n.edges)
 	idx := sort.Search(num, func(i int) bool {
-		return n.edges[i].label >= e.label
+		return n.edges[i].prefix[0] >= s.prefix[0]
 	})
-	n.edges = append(n.edges, e)
+	n.edges = append(n.edges, s)
 	if idx != num {
 		copy(n.edges[idx+1:], n.edges[idx:num])
-		n.edges[idx] = e
+		n.edges[idx] = s
 	}
 }
 
-func (n *Node) replaceEdge(e edge) {
+func (n *Node) repSub(s *Node) {
 	num := len(n.edges)
 	idx := sort.Search(num, func(i int) bool {
-		return n.edges[i].label >= e.label
+		return n.edges[i].prefix[0] >= s.prefix[0]
 	})
-	if idx < num && n.edges[idx].label == e.label {
-		n.edges[idx].node = e.node
+	if idx < num && n.edges[idx].prefix[0] == s.prefix[0] {
+		n.edges[idx] = s
 		return
 	}
 	panic("replacing missing edge")
 }
 
-func (n *Node) getEdge(label byte) (int, *Node) {
+func (n *Node) getSub(label byte) (int, *Node) {
 	num := len(n.edges)
 	idx := sort.Search(num, func(i int) bool {
-		return n.edges[i].label >= label
+		return n.edges[i].prefix[0] >= label
 	})
-	if idx < num && n.edges[idx].label == label {
-		return idx, n.edges[idx].node
+	if idx < num && n.edges[idx].prefix[0] == label {
+		return idx, n.edges[idx]
 	}
 	return -1, nil
 }
 
-func (n *Node) delEdge(label byte) {
+func (n *Node) delSub(label byte) {
 	num := len(n.edges)
 	idx := sort.Search(num, func(i int) bool {
-		return n.edges[i].label >= label
+		return n.edges[i].prefix[0] >= label
 	})
-	if idx < num && n.edges[idx].label == label {
+	if idx < num && n.edges[idx].prefix[0] == label {
 		copy(n.edges[idx:], n.edges[idx+1:])
-		n.edges[len(n.edges)-1] = edge{}
+		n.edges[len(n.edges)-1] = nil
 		n.edges = n.edges[:len(n.edges)-1]
 	}
 }
 
 func (n *Node) mergeChild() {
 	e := n.edges[0]
-	child := e.node
+	child := e
 	n.prefix = concat(n.prefix, child.prefix)
 	if child.leaf != nil {
 		n.leaf = new(leaf)
@@ -263,7 +258,7 @@ func (n *Node) mergeChild() {
 		n.leaf = nil
 	}
 	if len(child.edges) != 0 {
-		n.edges = make([]edge, len(child.edges))
+		n.edges = make([]*Node, len(child.edges))
 		copy(n.edges, child.edges)
 	} else {
 		n.edges = nil
@@ -282,7 +277,7 @@ func subs(n *Node, f Walker, sub bool) bool {
 
 	// Recurse on the children
 	for _, e := range n.edges {
-		if subs(e.node, f, true) {
+		if subs(e, f, true) {
 			return true
 		}
 	}
@@ -302,7 +297,7 @@ func walk(n *Node, f Walker, sub bool) bool {
 
 	// Recurse on the children
 	for _, e := range n.edges {
-		if walk(e.node, f, true) {
+		if walk(e, f, true) {
 			return true
 		}
 	}
@@ -326,7 +321,7 @@ func (n *Node) get(key []byte) interface{} {
 		}
 
 		// Look for an edge
-		_, n = n.getEdge(s[0])
+		_, n = n.getSub(s[0])
 		if n == nil {
 			break
 		}

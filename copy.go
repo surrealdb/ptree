@@ -120,7 +120,7 @@ func (c *Copy) del(p, n *Node, s []byte) (*Node, *leaf) {
 
 	// Look for an edge
 	l := s[0]
-	i, e := n.getEdge(l)
+	i, e := n.getSub(l)
 	if e == nil || !bytes.HasPrefix(s, e.prefix) {
 		return nil, nil
 	}
@@ -138,12 +138,12 @@ func (c *Copy) del(p, n *Node, s []byte) (*Node, *leaf) {
 
 	// Delete the edge if the node has no edges
 	if node.leaf == nil && len(node.edges) == 0 {
-		d.delEdge(l)
+		d.delSub(l)
 		if n != c.root && len(d.edges) == 1 && !d.isLeaf() {
 			d.mergeChild()
 		}
 	} else {
-		d.edges[i].node = node
+		d.edges[i] = node
 	}
 
 	return d, leaf
@@ -167,22 +167,19 @@ func (c *Copy) put(p, n *Node, s, k []byte, v interface{}) (*Node, *leaf) {
 	}
 
 	// Look for the edge
-	i, e := n.getEdge(s[0])
+	i, e := n.getSub(s[0])
 
 	// No edge, create one
 	if e == nil {
-		e := edge{
-			label: s[0],
-			node: &Node{
-				leaf: &leaf{
-					key: k,
-					val: v,
-				},
-				prefix: s,
+		e := &Node{
+			leaf: &leaf{
+				key: k,
+				val: v,
 			},
+			prefix: s,
 		}
 		d := n.dup()
-		d.addEdge(e)
+		d.addSub(e)
 		return d, nil
 	}
 
@@ -194,7 +191,7 @@ func (c *Copy) put(p, n *Node, s, k []byte, v interface{}) (*Node, *leaf) {
 		node, leaf := c.put(n, e, s, k, v)
 		if node != nil {
 			nc := n.dup()
-			nc.edges[i].node = node
+			nc.edges[i] = node
 			return nc, leaf
 		}
 		return nil, leaf
@@ -205,17 +202,11 @@ func (c *Copy) put(p, n *Node, s, k []byte, v interface{}) (*Node, *leaf) {
 	splitNode := &Node{
 		prefix: s[:cl],
 	}
-	nc.replaceEdge(edge{
-		label: s[0],
-		node:  splitNode,
-	})
+	nc.repSub(splitNode)
 
 	// Restore the existing child node
 	modChild := e.dup()
-	splitNode.addEdge(edge{
-		label: modChild.prefix[cl],
-		node:  modChild,
-	})
+	splitNode.addSub(modChild)
 	modChild.prefix = modChild.prefix[cl:]
 
 	// Create a new leaf node
@@ -232,12 +223,9 @@ func (c *Copy) put(p, n *Node, s, k []byte, v interface{}) (*Node, *leaf) {
 	}
 
 	// Create a new edge for the node
-	splitNode.addEdge(edge{
-		label: s[0],
-		node: &Node{
-			leaf:   leaf,
-			prefix: s,
-		},
+	splitNode.addSub(&Node{
+		leaf:   leaf,
+		prefix: s,
 	})
 
 	return nc, nil

@@ -131,7 +131,7 @@ OUTER:
 
 					if num := len(n.edges); num > 0 {
 						c.path = append(c.path, &item{pos: num - 1, node: n})
-						n = n.edges[num-1].node
+						n = n.edges[num-1]
 						continue
 					}
 
@@ -179,7 +179,7 @@ OUTER:
 			if len(n.edges) > 0 {
 
 				c.path = append(c.path, &item{pos: 0, node: n})
-				n = n.edges[0].node
+				n = n.edges[0]
 
 				if n.isLeaf() {
 					c.seek = n.leaf.key
@@ -259,16 +259,16 @@ func (c *Cursor) Seek(k []byte) ([]byte, interface{}) {
 		t := n
 
 		// Look for an edge
-		if x, n = n.getEdge(s[0]); n == nil {
+		if x, n = n.getSub(s[0]); n == nil {
 
 			if len(t.edges) == 0 {
 				return c.Next()
-			} else if s[0] < t.edges[0].label {
+			} else if s[0] < t.edges[0].prefix[0] {
 				if len(c.path) == 0 {
 					return c.first(c.tree.root)
 				}
 				return c.first(c.path[len(c.path)-1].node)
-			} else if s[0] > t.edges[len(t.edges)-1].label {
+			} else if s[0] > t.edges[len(t.edges)-1].prefix[0] {
 				if len(c.path) == 0 {
 					break
 				}
@@ -324,7 +324,7 @@ func (c *Cursor) node() *Node {
 		x = len(c.path) - 1
 	}
 
-	return c.path[x].node.edges[c.path[x].pos].node
+	return c.path[x].node.edges[c.path[x].pos]
 
 }
 
@@ -339,7 +339,7 @@ func (c *Cursor) first(n *Node) ([]byte, interface{}) {
 
 		if len(n.edges) > 0 {
 			c.path = append(c.path, &item{pos: 0, node: n})
-			n = n.edges[0].node
+			n = n.edges[0]
 		} else {
 			break
 		}
@@ -356,7 +356,7 @@ func (c *Cursor) last(n *Node) ([]byte, interface{}) {
 
 		if num := len(n.edges); num > 0 {
 			c.path = append(c.path, &item{pos: num - 1, node: n})
-			n = n.edges[num-1].node
+			n = n.edges[num-1]
 			continue
 		}
 
