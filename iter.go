@@ -238,9 +238,9 @@ OUTER:
 // Seek moves the cursor to a given key in the tree and returns it.
 // If the specified key does not exist then the next key in the tree
 // is used. If no keys follow, then a nil key and value are returned.
-func (c *Cursor) Seek(k []byte) ([]byte, interface{}) {
+func (c *Cursor) Seek(key []byte) ([]byte, interface{}) {
 
-	s := k
+	s := key
 
 	n := c.tree.root
 

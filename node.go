@@ -79,9 +79,9 @@ func (n *Node) Max() ([]byte, interface{}) {
 
 // Path is used to recurse over the tree only visiting nodes
 // which are above this node in the tree.
-func (n *Node) Path(k []byte, f Walker) {
+func (n *Node) Path(key []byte, f Walker) {
 
-	s := k
+	s := key
 
 	for {
 
@@ -109,9 +109,9 @@ func (n *Node) Path(k []byte, f Walker) {
 
 // Subs is used to recurse over the tree only visiting nodes
 // which are directly under this node in the tree.
-func (n *Node) Subs(k []byte, f Walker) {
+func (n *Node) Subs(key []byte, f Walker) {
 
-	s := k
+	s := key
 
 	for {
 
@@ -142,9 +142,9 @@ func (n *Node) Subs(k []byte, f Walker) {
 
 // Walk is used to recurse over the tree only visiting nodes
 // which are under this node in the tree.
-func (n *Node) Walk(k []byte, f Walker) {
+func (n *Node) Walk(key []byte, f Walker) {
 
-	s := k
+	s := key
 
 	for {
 
@@ -306,9 +306,9 @@ func walk(n *Node, f Walker, sub bool) bool {
 
 }
 
-func (n *Node) get(key []byte) interface{} {
+func (n *Node) get(k []byte) interface{} {
 
-	s := key
+	s := k
 
 	for {
 
