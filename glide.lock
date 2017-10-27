@@ -1,5 +1,5 @@
-hash: a1b63da4ca28b53cc2b9b67f27cc5c6e35b4b37a216198a4106f75882be6ca96
-updated: 2017-10-25T18:04:09.92996+01:00
+hash: 1cc8aa77fa6d0c71e8fbb7c779b4ec09a671b5786316688ecdd423d7fbb52091
+updated: 2017-10-27T21:42:00.69511+01:00
 imports: []
 testImports:
 - name: github.com/gopherjs/gopherjs
