@@ -441,7 +441,6 @@ func TestIterate(t *testing.T) {
 
 	Convey("Can iterate using `next`", t, func() {
 		for j := 1; j < len(s); j++ {
-			// Convey(fmt.Sprintf("Can iterate to the next item %d", j), func() {
 			k, v := i.Next()
 			var t []int
 			for _, q := range i.path {
@@ -450,7 +449,6 @@ func TestIterate(t *testing.T) {
 			So(fmt.Sprint(t), ShouldEqual, fmt.Sprint(p[j]))
 			So(v, ShouldEqual, j)
 			So(k, ShouldResemble, []byte(s[j]))
-			// })
 		}
 	})
 
@@ -473,7 +471,6 @@ func TestIterate(t *testing.T) {
 
 	Convey("Can iterate using `prev`", t, func() {
 		for j := len(s) - 2; j >= 0; j-- {
-			// Convey(fmt.Sprintf("Can iterate to the prev item %d", j), func() {
 			k, v := i.Prev()
 			var t []int
 			for _, q := range i.path {
@@ -482,7 +479,6 @@ func TestIterate(t *testing.T) {
 			So(fmt.Sprint(t), ShouldEqual, fmt.Sprint(p[j]))
 			So(v, ShouldEqual, j)
 			So(k, ShouldResemble, []byte(s[j]))
-			// })
 		}
 	})
 
@@ -690,36 +686,3 @@ func TestDelete(t *testing.T) {
 	})
 
 }
-
-/*func TestBinary(t *testing.T) {
-
-	c := New().Copy()
-
-	// surrealabcum
-	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0}, nil)
-	// surrealabcum!utobie@abcum.com
-	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 33, 0, 0, 7, 117, 0, 0, 7, 116, 111, 98, 105, 101, 64, 97, 98, 99, 117, 109, 46, 99, 111, 109, 0, 0}, nil)
-	// surrealabcum*acreon
-	tk := []byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 42, 0, 0}
-	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 42, 0, 0, 7, 97, 99, 114, 101, 111, 110, 0, 0}, nil)
-	// surrealabcum*acreon!utobie@abcum.com
-	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 42, 0, 0, 7, 97, 99, 114, 101, 111, 110, 0, 0, 7, 33, 0, 0, 7, 117, 0, 0, 7, 116, 111, 98, 105, 101, 64, 97, 98, 99, 117, 109, 46, 99, 111, 109, 0, 0}, nil)
-	// surrealabcum*acreon*person
-	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 42, 0, 0, 7, 97, 99, 114, 101, 111, 110, 0, 0, 7, 42, 0, 0, 7, 112, 101, 114, 115, 111, 110, 0, 0}, nil)
-	// surrealabcum*acreon*person!fage
-	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 42, 0, 0, 7, 97, 99, 114, 101, 111, 110, 0, 0, 7, 42, 0, 0, 7, 112, 101, 114, 115, 111, 110, 0, 0, 7, 33, 0, 0, 7, 102, 0, 0, 7, 97, 103, 101, 0, 0}, nil)
-	// surrealabcum*acreon*person!fname
-	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 42, 0, 0, 7, 97, 99, 114, 101, 111, 110, 0, 0, 7, 42, 0, 0, 7, 112, 101, 114, 115, 111, 110, 0, 0, 7, 33, 0, 0, 7, 102, 0, 0, 7, 110, 97, 109, 101, 0, 0}, nil)
-	// surrealabcum*acreon*person!isort
-	c.Put([]byte{7, 115, 117, 114, 114, 101, 97, 108, 0, 0, 7, 97, 98, 99, 117, 109, 0, 0, 7, 42, 0, 0, 7, 97, 99, 114, 101, 111, 110, 0, 0, 7, 42, 0, 0, 7, 112, 101, 114, 115, 111, 110, 0, 0, 7, 33, 0, 0, 7, 105, 0, 0, 7, 115, 111, 114, 116, 0, 0}, nil)
-
-	Convey("Can list items", t, func() {
-		i := 0
-		c.Root().Subs(tk, func(k []byte, v interface{}) (b bool) {
-			i++
-			return
-		})
-		So(i, ShouldEqual, 1)
-	})
-
-}*/

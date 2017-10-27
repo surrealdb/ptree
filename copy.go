@@ -53,28 +53,26 @@ func (c *Copy) Get(key []byte) interface{} {
 
 // Del is used to delete a given key, returning the previous value.
 func (c *Copy) Del(key []byte) interface{} {
-	root, leaf := c.del(nil, c.root, key)
+	root, leaf, old := c.del(nil, c.root, key)
 	if root != nil {
 		c.root = root
 	}
 	if leaf != nil {
 		c.size--
-		return leaf.val
 	}
-	return nil
+	return old
 }
 
 // Put is used to insert a specific key, returning the previous value.
 func (c *Copy) Put(key []byte, val interface{}) interface{} {
-	root, leaf := c.put(nil, c.root, key, key, val)
+	root, leaf, old := c.put(nil, c.root, key, key, val)
 	if root != nil {
 		c.root = root
 	}
 	if leaf == nil {
 		c.size++
-		return nil
 	}
-	return leaf.val
+	return old
 }
 
 // ---------------------------------------------------------------------------
@@ -95,12 +93,12 @@ func concat(a, b []byte) (c []byte) {
 	return
 }
 
-func (c *Copy) del(p, n *Node, s []byte) (*Node, *leaf) {
+func (c *Copy) del(p, n *Node, s []byte) (*Node, *leaf, interface{}) {
 
 	if len(s) == 0 {
 
 		if !n.isLeaf() {
-			return nil, nil
+			return nil, nil, nil
 		}
 
 		d := n.dup()
@@ -114,7 +112,7 @@ func (c *Copy) del(p, n *Node, s []byte) (*Node, *leaf) {
 		}
 
 		// Return the found node and leaf node
-		return d, n.leaf
+		return d, n.leaf, n.leaf.val
 
 	}
 
@@ -122,15 +120,15 @@ func (c *Copy) del(p, n *Node, s []byte) (*Node, *leaf) {
 	l := s[0]
 	i, e := n.getSub(l)
 	if e == nil || !bytes.HasPrefix(s, e.prefix) {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	// Consume the search prefix
 	s = s[len(e.prefix):]
 
-	node, leaf := c.del(n, e, s)
+	node, leaf, old := c.del(n, e, s)
 	if node == nil {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	// Copy this node
@@ -146,23 +144,29 @@ func (c *Copy) del(p, n *Node, s []byte) (*Node, *leaf) {
 		d.edges[i] = node
 	}
 
-	return d, leaf
+	return d, leaf, old
 
 }
 
-func (c *Copy) put(p, n *Node, s, k []byte, v interface{}) (*Node, *leaf) {
+func (c *Copy) put(p, n *Node, s, k []byte, v interface{}) (*Node, *leaf, interface{}) {
 
 	if len(s) == 0 {
 
 		d := n.dup()
 
-		if n.isLeaf() {
-			d.leaf.val = v
-		} else {
-			d.leaf = &leaf{key: k, val: v}
+		// Create the leaf if necessary
+		if !n.isLeaf() {
+			d.leaf = &leaf{key: k}
 		}
 
-		return d, n.leaf
+		// Get the old value
+		o := n.leaf.val
+
+		// Update the leaf value
+		d.leaf.val = v
+
+		// Return the new node and leaf node
+		return d, n.leaf, o
 
 	}
 
@@ -180,7 +184,7 @@ func (c *Copy) put(p, n *Node, s, k []byte, v interface{}) (*Node, *leaf) {
 		}
 		d := n.dup()
 		d.addSub(e)
-		return d, nil
+		return d, nil, nil
 	}
 
 	// Determine longest prefix of the search key on match
@@ -188,13 +192,13 @@ func (c *Copy) put(p, n *Node, s, k []byte, v interface{}) (*Node, *leaf) {
 
 	if cl == len(e.prefix) {
 		s = s[cl:]
-		node, leaf := c.put(n, e, s, k, v)
+		node, leaf, old := c.put(n, e, s, k, v)
 		if node != nil {
 			nc := n.dup()
 			nc.edges[i] = node
-			return nc, leaf
+			return nc, leaf, old
 		}
-		return nil, leaf
+		return nil, leaf, old
 	}
 
 	// Split the node
@@ -219,7 +223,7 @@ func (c *Copy) put(p, n *Node, s, k []byte, v interface{}) (*Node, *leaf) {
 	s = s[cl:]
 	if len(s) == 0 {
 		splitNode.leaf = leaf
-		return nc, nil
+		return nc, nil, nil
 	}
 
 	// Create a new edge for the node
@@ -228,6 +232,6 @@ func (c *Copy) put(p, n *Node, s, k []byte, v interface{}) (*Node, *leaf) {
 		prefix: s,
 	})
 
-	return nc, nil
+	return nc, nil, nil
 
 }
