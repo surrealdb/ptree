@@ -29,12 +29,12 @@ type Node struct {
 
 type leaf struct {
 	key []byte
-	val []byte
+	val interface{}
 }
 
 // Min returns the key and value of the minimum item in the
 // subtree of the current node.
-func (n *Node) Min() ([]byte, []byte) {
+func (n *Node) Min() ([]byte, interface{}) {
 
 	for {
 
@@ -56,7 +56,7 @@ func (n *Node) Min() ([]byte, []byte) {
 
 // Max returns the key and value of the maximum item in the
 // subtree of the current node.
-func (n *Node) Max() ([]byte, []byte) {
+func (n *Node) Max() ([]byte, interface{}) {
 
 	for {
 
@@ -306,7 +306,7 @@ func walk(n *Node, f Walker, sub bool) bool {
 
 }
 
-func (n *Node) get(k []byte) []byte {
+func (n *Node) get(k []byte) interface{} {
 
 	s := k
 

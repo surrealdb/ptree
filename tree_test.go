@@ -201,7 +201,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `nil` with `walk`", t, func() {
 		i := 0
-		c.Root().Walk(nil, func(k, v []byte) (e bool) {
+		c.Root().Walk(nil, func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
@@ -210,7 +210,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/zen/s` with `walk`", t, func() {
 		i := 0
-		c.Root().Walk([]byte("/test/zen/s"), func(k, v []byte) (e bool) {
+		c.Root().Walk([]byte("/test/zen/s"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
@@ -219,7 +219,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/zen/sub` with `walk`", t, func() {
 		i := 0
-		c.Root().Walk([]byte("/test/zen/sub"), func(k, v []byte) (e bool) {
+		c.Root().Walk([]byte("/test/zen/sub"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
@@ -228,7 +228,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/zen/sub-o` with `walk`", t, func() {
 		i := 0
-		c.Root().Walk([]byte("/test/zen/sub-o"), func(k, v []byte) (e bool) {
+		c.Root().Walk([]byte("/test/zen/sub-o"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
@@ -237,7 +237,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/zen/sub-one` with `walk`", t, func() {
 		i := 0
-		c.Root().Walk([]byte("/test/zen/sub-one"), func(k, v []byte) (e bool) {
+		c.Root().Walk([]byte("/test/zen/sub-one"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
@@ -246,7 +246,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/zen/sub` with `walk` and exit", t, func() {
 		i := 0
-		c.Root().Walk([]byte("/test/zen/sub"), func(k, v []byte) (e bool) {
+		c.Root().Walk([]byte("/test/zen/sub"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return true
 		})
@@ -257,7 +257,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/` with `subs`", t, func() {
 		i := 0
-		c.Root().Subs([]byte("/test/"), func(k, v []byte) (e bool) {
+		c.Root().Subs([]byte("/test/"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
@@ -266,7 +266,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/zen/s` with `subs`", t, func() {
 		i := 0
-		c.Root().Subs([]byte("/test/zen/s"), func(k, v []byte) (e bool) {
+		c.Root().Subs([]byte("/test/zen/s"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
@@ -275,7 +275,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/zen/sub` with `subs`", t, func() {
 		i := 0
-		c.Root().Subs([]byte("/test/zen/sub"), func(k, v []byte) (e bool) {
+		c.Root().Subs([]byte("/test/zen/sub"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
@@ -284,7 +284,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/zen/sub-o` with `subs`", t, func() {
 		i := 0
-		c.Root().Subs([]byte("/test/zen/sub-t"), func(k, v []byte) (e bool) {
+		c.Root().Subs([]byte("/test/zen/sub-t"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
@@ -293,7 +293,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/zen/sub-one` with `subs`", t, func() {
 		i := 0
-		c.Root().Subs([]byte("/test/zen/sub-one"), func(k, v []byte) (e bool) {
+		c.Root().Subs([]byte("/test/zen/sub-one"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
@@ -302,7 +302,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/zen/sub` with `subs` and exit", t, func() {
 		i := 0
-		c.Root().Subs([]byte("/test/zen/sub"), func(k, v []byte) (e bool) {
+		c.Root().Subs([]byte("/test/zen/sub"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return true
 		})
@@ -313,7 +313,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `nil` with `path`", t, func() {
 		i := 0
-		c.Root().Path(nil, func(k, v []byte) (e bool) {
+		c.Root().Path(nil, func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
@@ -322,7 +322,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/zen/s` with `path`", t, func() {
 		i := 0
-		c.Root().Path([]byte("/test/zen/s"), func(k, v []byte) (e bool) {
+		c.Root().Path([]byte("/test/zen/s"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
@@ -331,7 +331,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/zen/sub` with `path`", t, func() {
 		i := 0
-		c.Root().Path([]byte("/test/zen/sub"), func(k, v []byte) (e bool) {
+		c.Root().Path([]byte("/test/zen/sub"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
@@ -340,7 +340,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/zen/sub-o` with `path`", t, func() {
 		i := 0
-		c.Root().Path([]byte("/test/zen/sub-o"), func(k, v []byte) (e bool) {
+		c.Root().Path([]byte("/test/zen/sub-o"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
@@ -349,7 +349,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/zen/sub-one` with `path`", t, func() {
 		i := 0
-		c.Root().Path([]byte("/test/zen/sub-one"), func(k, v []byte) (e bool) {
+		c.Root().Path([]byte("/test/zen/sub-one"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return
 		})
@@ -358,7 +358,7 @@ func TestComplex(t *testing.T) {
 
 	Convey("Can iterate tree items at `/test/zen/sub` with `path` and exit", t, func() {
 		i := 0
-		c.Root().Path([]byte("/test/zen/sub"), func(k, v []byte) (e bool) {
+		c.Root().Path([]byte("/test/zen/sub"), func(k []byte, v interface{}) (e bool) {
 			i++
 			return true
 		})
