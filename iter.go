@@ -248,7 +248,6 @@ func (c *Cursor) Seek(key []byte) ([]byte, interface{}) {
 
 	var x int
 
-	// OUTER:
 	for {
 
 		// Check for key exhaution
@@ -267,12 +266,24 @@ func (c *Cursor) Seek(key []byte) ([]byte, interface{}) {
 				if len(c.path) == 0 {
 					return c.first(c.tree.root)
 				}
-				return c.first(c.path[len(c.path)-1].node)
+				return c.Next()
 			} else if s[0] > t.edges[len(t.edges)-1].prefix[0] {
 				if len(c.path) == 0 {
 					break
 				}
-				return c.last(c.path[len(c.path)-1].node)
+				c.last(c.path[len(c.path)-1].node)
+				return c.Next()
+			} else {
+				for x, n = range t.edges {
+					if bytes.Compare(s, n.prefix) < 0 {
+						if len(c.path) == 0 {
+							break
+						}
+						c.path = append(c.path, &item{pos: x, node: t})
+						s = s[len(n.prefix):]
+						return c.Next()
+					}
+				}
 			}
 
 			break

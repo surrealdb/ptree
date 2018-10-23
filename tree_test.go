@@ -42,7 +42,7 @@ var s = []string{
 	"/test/two/sub-two/1st", // 17
 	"/test/two/sub-two/2nd", // 18
 	"/test/two/sub-zen",     // 19
-	"/test/two/sub-zen/1st", // 20
+	"/test/two/sub-zen/1st", // 20 ----------
 	"/test/two/sub-zen/2nd", // 21
 	"/test/zen",             // 22
 	"/test/zen/sub-one",     // 23
@@ -80,7 +80,7 @@ var p = [][]int{
 	{0, 1, 0, 1, 0, 1, 0, 0}, // 17
 	{0, 1, 0, 1, 0, 1, 0, 1}, // 18
 	{0, 1, 0, 1, 0, 2},       // 19
-	{0, 1, 0, 1, 0, 2, 0, 0}, // 20
+	{0, 1, 0, 1, 0, 2, 0, 0}, // 20 ----------
 	{0, 1, 0, 1, 0, 2, 0, 1}, // 21
 	{0, 1, 0, 2},             // 22
 	{0, 1, 0, 2, 0, 0},       // 23
@@ -546,8 +546,19 @@ func TestIterate(t *testing.T) {
 		So(v, ShouldResemble, []byte(s[10]))
 	})
 
-	Convey("Seek overfull item is correct", t, func() {
-		k, v := i.Seek([]byte(s[10] + "-"))
+	Convey("Seek next item is correct", t, func() {
+		k, v := i.Seek([]byte("/test/one/sub-zen/0th"))
+		var t []int
+		for _, q := range i.path {
+			t = append(t, q.pos)
+		}
+		So(fmt.Sprint(t), ShouldEqual, fmt.Sprint(p[10]))
+		So(k, ShouldResemble, []byte(s[10]))
+		So(v, ShouldResemble, []byte(s[10]))
+	})
+
+	Convey("Seek next item is correct", t, func() {
+		k, v := i.Seek([]byte("/test/one/sub-zen/1zz"))
 		var t []int
 		for _, q := range i.path {
 			t = append(t, q.pos)
@@ -555,6 +566,28 @@ func TestIterate(t *testing.T) {
 		So(fmt.Sprint(t), ShouldEqual, fmt.Sprint(p[11]))
 		So(k, ShouldResemble, []byte(s[11]))
 		So(v, ShouldResemble, []byte(s[11]))
+	})
+
+	Convey("Seek next item is correct", t, func() {
+		k, v := i.Seek([]byte("/test/one/sub-zen/2zz"))
+		var t []int
+		for _, q := range i.path {
+			t = append(t, q.pos)
+		}
+		So(fmt.Sprint(t), ShouldEqual, fmt.Sprint(p[12]))
+		So(k, ShouldResemble, []byte(s[12]))
+		So(v, ShouldResemble, []byte(s[12]))
+	})
+
+	Convey("Seek jump item is correct", t, func() {
+		k, v := i.Seek([]byte("/test/one/sub-zen/3rd"))
+		var t []int
+		for _, q := range i.path {
+			t = append(t, q.pos)
+		}
+		So(fmt.Sprint(t), ShouldEqual, fmt.Sprint(p[12]))
+		So(k, ShouldResemble, []byte(s[12]))
+		So(v, ShouldResemble, []byte(s[12]))
 	})
 
 	Convey("Seek finishing item is correct", t, func() {
