@@ -276,12 +276,7 @@ func (c *Cursor) Seek(key []byte) ([]byte, interface{}) {
 			} else {
 				for x, n = range t.edges {
 					if bytes.Compare(s, n.prefix) < 0 {
-						if len(c.path) == 0 {
-							break
-						}
-						c.path = append(c.path, &item{pos: x, node: t})
-						s = s[len(n.prefix):]
-						return c.Next()
+						return c.first(n)
 					}
 				}
 			}
